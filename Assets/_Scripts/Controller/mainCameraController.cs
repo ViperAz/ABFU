@@ -5,7 +5,6 @@ using UnityEngine;
 public class mainCameraController : MonoBehaviour {
 	
 
-
 	public  Transform defaultFocusTarget ;
 
 	public Transform target ;
@@ -20,11 +19,6 @@ public class mainCameraController : MonoBehaviour {
 	public float camSpeed ; 
 
 	private int direction = 0;
-
-
-
-
-
 	private float inverseMoveTime;
 
 	private Camera mainCamera ; 
@@ -130,14 +124,14 @@ public class mainCameraController : MonoBehaviour {
 
 	public void SetParent( Transform newParent )
 	{
-		transform.parent = newParent;
+		transform.SetParent(newParent);
 	}
 
 
 
 	public void DetachFromParent( )
 	{
-		transform.parent = null;
+		transform.SetParent(null);
 	}
 
 

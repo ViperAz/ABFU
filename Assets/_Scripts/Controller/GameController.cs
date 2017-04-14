@@ -15,7 +15,7 @@ public class GameController : MonoBehaviour {
 	**/
 
 	//This var send from GameManager**
-	int playerCount = 1 ;
+	public int playerCount = 4 ;
 
 	//Need to be static to beable to call from other script without initialization from here 
 	public static List<Player> players = new List<Player>();
@@ -95,7 +95,7 @@ public class GameController : MonoBehaviour {
 		// switchCamera (currentPlayer, true);
 
 		//Demo replace Dice  not live yet
-		int diceNum = Random.Range(1,12);
+		int diceNum = 1;
 		Debug.Log ("Dice num :" + diceNum);
 
 
@@ -131,11 +131,11 @@ public class GameController : MonoBehaviour {
 					break ; 
 				}
 				case FieldType.factoryField :{
-					defaultFieldEvent();
+					yield return StartCoroutine(defaultFieldEvent());
 					break ; 
 				}
 				case FieldType.marketField :{
-					defaultFieldEvent();
+					yield return StartCoroutine(defaultFieldEvent());
 					break ; 
 				}
 				case FieldType.startField : {
@@ -227,9 +227,6 @@ public class GameController : MonoBehaviour {
 		players.Clear();
 		field.Clear ();
 
-
-
-
 		inverseMoveTime = 1f / moveTime;
 		isOtherFinish = true; 
 		isChangeFinished = false;
@@ -314,20 +311,17 @@ public class GameController : MonoBehaviour {
 			StartCoroutine (switchCamera (sideTrans));
 			cameraController.SetParent (sideTrans);
 		}
-		else {
-			//  if changed finish and not
-		}
 
 
 		if (Input.GetKeyDown (KeyCode.F)) {
 			playerCamMode = (playerCamMode + 1) % 3;
 			isChangeFinished = !isChangeFinished;
 		}
+
+
 		if (Input.GetKey (KeyCode.Q)) {
 			cameraController.setActiveRotation = true;
 			cameraController.Direction = -1; 
-
-
 		} else if (Input.GetKey (KeyCode.E)) {
 			cameraController.setActiveRotation = true;
 			cameraController.Direction = 1; 
@@ -342,6 +336,9 @@ public class GameController : MonoBehaviour {
 
 
 	IEnumerator defaultFieldEvent(){
+		DefaultField field = defaultField.Find(x => x.Id== players[currentPlayer].fieldId);
+		if (field.owner == null &&  players[currentPlayer].buyQouta >0){
+					//No Owner
 		isShopOpen = true ; 
 		isBuyFin = false ;
 		ShopCanvas.SetActive(isShopOpen);
@@ -353,7 +350,19 @@ public class GameController : MonoBehaviour {
 		ShopCanvas.SetActive(isShopOpen);
 		//
 		yield return null ;
+		}
+		else if (field.owner == players[currentPlayer]){
+			Debug.Log("same owner buy a new one or not");
+		}
+		else{
+			//Other Owner
+			Debug.Log("lose money and begin buy bitches");
+		}
+
+
 	}
+
+	
 
 
 		

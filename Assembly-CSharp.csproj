@@ -61,8 +61,11 @@
      <Compile Include="Assets\_Scripts\Model\Player.cs" />
      <Compile Include="Assets\_Scripts\Model\Seed.cs" />
      <Compile Include="Assets\_Scripts\Model\SeedContainer.cs" />
+     <Compile Include="Assets\_Scripts\Model\SeedModelHolder.cs" />
      <Compile Include="Assets\_Scripts\Model\ShopScrollList.cs" />
-     <Compile Include="Assets\_Scripts\ShopButton.cs" />
+     <Compile Include="Assets\_Scripts\UI\CancelButton.cs" />
+     <Compile Include="Assets\_Scripts\UI\ConfirmButton.cs" />
+     <Compile Include="Assets\_Scripts\UI\ShopButton.cs" />
      <None Include="Assets\SeedContainer.xml" />
  <Reference Include="UnityEngine.UI">
  <HintPath>E:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

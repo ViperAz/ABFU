@@ -11,6 +11,7 @@ public class Seed : Item {
 
 	//area center = 1 south = 2 east = 3 north = 4 . 
 	public int zone ;
+	
 
 	public int getStandCost(int fieldZone){
 
@@ -18,6 +19,18 @@ public class Seed : Item {
 			return cost; 
 		}
 		return cost / 2; 
+	}
+	
+	public override string ToString(){
+		return this.name;
+	}
+	
+	/// <summary>
+	/// Awake is called when the script instance is being loaded.
+	/// </summary>
+	void Awake()
+	{
+		
 	}
 
 }

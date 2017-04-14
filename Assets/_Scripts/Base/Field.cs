@@ -8,6 +8,8 @@ public class Field :MonoBehaviour {
 	
 	[SerializeField]
 	private int id ;
+
+	public string name ;
 	public Transform[] trans = new Transform[4];
 
 	public FieldType type = (int) FieldType.defaultField;

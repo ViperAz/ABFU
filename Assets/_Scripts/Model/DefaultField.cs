@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class DefaultField : Field {
 
+	
 
+	public Transform plantArea;
+	
 	public int cost ;
 
 
@@ -25,5 +28,15 @@ public class DefaultField : Field {
 	}
 
 	public Player owner ;
+
+	public override string ToString(){
+		return this.name ;
+	}
+
+
+	void updatePlantModel(){
+		
+
+	}
 
 }
