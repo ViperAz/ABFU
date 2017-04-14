@@ -5,9 +5,9 @@ public class Item {
 
     public int id  ; 
 
-    public string Name;
+    public string name;
 
-	public int Cost ;
+	public int cost ;
 
 
 }

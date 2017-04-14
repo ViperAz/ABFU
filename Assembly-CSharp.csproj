@@ -46,24 +46,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\ShopButton.cs" />
+     <Compile Include="Assets\DragPane.cs" />
+     <Compile Include="Assets\SimpleObjectPool.cs" />
      <Compile Include="Assets\_Scripts\Base\Enum.cs" />
      <Compile Include="Assets\_Scripts\Base\Field.cs" />
-     <Compile Include="Assets\_Scripts\Base\FieldContainer.cs" />
+     <Compile Include="Assets\_Scripts\Base\IField.cs" />
      <Compile Include="Assets\_Scripts\Base\RandomNum.cs" />
-     <Compile Include="Assets\_Scripts\Controller\CameraController.cs" />
      <Compile Include="Assets\_Scripts\Controller\GameController.cs" />
      <Compile Include="Assets\_Scripts\Controller\GameManager.cs" />
      <Compile Include="Assets\_Scripts\Controller\mainCameraController.cs" />
      <Compile Include="Assets\_Scripts\Model\DefaultField.cs" />
      <Compile Include="Assets\_Scripts\Model\EventField.cs" />
-     <Compile Include="Assets\_Scripts\Model\Inventory.cs" />
      <Compile Include="Assets\_Scripts\Model\Item.cs" />
      <Compile Include="Assets\_Scripts\Model\Player.cs" />
      <Compile Include="Assets\_Scripts\Model\Seed.cs" />
      <Compile Include="Assets\_Scripts\Model\SeedContainer.cs" />
-     <Compile Include="Assets\_Scripts\Model\Seeds.cs" />
-     <Compile Include="Assets\test.cs" />
+     <Compile Include="Assets\_Scripts\Model\ShopScrollList.cs" />
+     <Compile Include="Assets\_Scripts\ShopButton.cs" />
      <None Include="Assets\SeedContainer.xml" />
  <Reference Include="UnityEngine.UI">
  <HintPath>E:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

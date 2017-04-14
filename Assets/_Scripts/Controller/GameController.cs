@@ -18,8 +18,10 @@ public class GameController : MonoBehaviour {
 	int playerCount = 1 ;
 
 	//Need to be static to beable to call from other script without initialization from here 
-	static List<Player> players = new List<Player>();
-	static List<Field> field  = new List<Field>();
+	public static List<Player> players = new List<Player>();
+	//All Field for calculate Walking
+	public static List<Field> field  = new List<Field>();
+	public List<DefaultField> defaultField = new List<DefaultField>();
 	public RandomNum[] rans = new RandomNum[12] ;
 
 	//Seed Collection 
@@ -32,14 +34,14 @@ public class GameController : MonoBehaviour {
 
 
 	private int  currentTurn ;
-	private int currentPlayer = 0;
+	public static int currentPlayer = 0;
 	public int turn ; //number of round for this game.
 	public int startMoney ;
 
 	public float moveTime ; // in sec
 	private float inverseMoveTime;
 
-	private bool isInitFinish = false ; 
+	public static bool isInitFinish = false ; 
 	private bool isGameOver = false;
 	private bool isGameMoving = false;
 	private bool isOtherFinish = false ; // Check isother play is finsished
@@ -47,6 +49,11 @@ public class GameController : MonoBehaviour {
 	private int playerCamMode = 0 ;
 	int boardLength ; 
 
+
+	public GameObject ShopCanvas ; 
+	public bool isShopOpen = false ; 
+	public static bool isBuyFin = false ;
+	public ShopScrollList  shoplist ; 
 
 	// Use this for initialization
 	void Start () {
@@ -81,14 +88,11 @@ public class GameController : MonoBehaviour {
 
 	}
 
-	void FixedUpdate(){
-
-	}
 
 	IEnumerator playerTurn(){
 		isGameMoving = true;
 		isOtherFinish = false ;
-//		switchCamera (currentPlayer, true);
+		// switchCamera (currentPlayer, true);
 
 		//Demo replace Dice  not live yet
 		int diceNum = Random.Range(1,12);
@@ -96,27 +100,63 @@ public class GameController : MonoBehaviour {
 
 
 		//Move player to Center of the cell 
-		yield  return StartCoroutine(aTob(players[currentPlayer], field [players[currentPlayer].FieldId-1].transform.position));
+		yield  return StartCoroutine(aTob(players[currentPlayer], field [players[currentPlayer].fieldId-1].transform.position));
 
 		// Move Player
 		yield return Move(currentPlayer, diceNum);
 
 		//Check Field and Field Action
+		yield return StartCoroutine(checkField ()) ; 
 
 		// All Action are finished
 		// Move player back to his own Pos
-		yield  return StartCoroutine(aTob(players[currentPlayer], field [players[currentPlayer].FieldId-1].trans[currentPlayer].position));
+		yield  return StartCoroutine(aTob(players[currentPlayer], field [players[currentPlayer].fieldId-1].trans[currentPlayer].position));
 
 
-//		switchCamera (currentPlayer, false);
-
-		
+		// switchCamera (currentPlayer, false);
 
 		currentPlayer = (currentPlayer + 1) %playerCount ;
 		Debug.Log (currentPlayer);
 		currentTurn++;
 		isGameMoving = false;
 		isOtherFinish = true; 
+
+	}
+
+	IEnumerator checkField (){
+		FieldType type = field [players[currentPlayer].fieldId-1].type ; 
+			switch(type){
+				case FieldType.defaultField :{
+					yield return StartCoroutine(defaultFieldEvent());
+					break ; 
+				}
+				case FieldType.factoryField :{
+					defaultFieldEvent();
+					break ; 
+				}
+				case FieldType.marketField :{
+					defaultFieldEvent();
+					break ; 
+				}
+				case FieldType.startField : {
+					Debug.Log("sa");
+					break ; 
+				}
+				case FieldType.cardField :{
+					Debug.Log("ca");
+					break ; 
+				}
+				case FieldType.forestField :{
+					Debug.Log("fo");
+					break ; 
+				}
+				
+
+				
+
+		}
+
+		
 
 	}
 
@@ -131,8 +171,8 @@ public class GameController : MonoBehaviour {
 
 	protected IEnumerator Move(int currentPlayer, int diceNum){
 		//Field Index not Field Id (if Id = index +1)
-		int currentField = players[currentPlayer].FieldId;
-		Debug.Log("Current Player"+ players[currentPlayer].PlayerName+"\n"+
+		int currentField = players[currentPlayer].fieldId;
+		Debug.Log("Current Player"+ players[currentPlayer].playerName+"\n"+
 			"Before Move :\n" +
 			"Current Field Id : "+currentField);
 
@@ -153,9 +193,9 @@ public class GameController : MonoBehaviour {
 			//wait for 0.3 sec then move to nextPos
 			yield return new WaitForSeconds (0.3f);
 		}
-		players [currentPlayer].FieldId = currentField;  
+		players [currentPlayer].fieldId = currentField;  
 		isGameMoving = false;
-		Debug.Log ("Current Player"+ players[currentPlayer].PlayerName+"\n"+
+		Debug.Log ("Current Player"+ players[currentPlayer].playerName+"\n"+
 			"After Move :\n" +
 			" Current Field Id : "+currentField);
 	}
@@ -180,11 +220,10 @@ public class GameController : MonoBehaviour {
 
 
 	// }
-
 	//Set up the Game . 
 	IEnumerator setUp(){
 
-
+		ShopCanvas.SetActive(isShopOpen);
 		players.Clear();
 		field.Clear ();
 
@@ -196,12 +235,22 @@ public class GameController : MonoBehaviour {
 		isChangeFinished = false;
 
 		//Load in Data 
-		seedLst = SeedContainer.Load (Path.Combine (Application.dataPath, "SeedContainer.xml"));
+		// seedLst = SeedContainer.Load (Path.Combine (Application.dataPath, "SeedContainer.xml"));
+
+		// Debug.Log(seedLst.Seeds.Count);
+
+		// foreach (Seed s in seedLst.Seeds){
+		// 	Debug.Log(s.Name+" "+s.Cost);
+		// }
 		foreach (GameObject g in GameObject.FindGameObjectsWithTag("Fields")) {
 			field.Add (g.GetComponent<Field> ());
 			yield return null;
 		}
-//		Debug.Log (field.Count);
+		foreach (DefaultField g in FindObjectsOfType(typeof(DefaultField)) as DefaultField[]) {
+			defaultField.Add (g.GetComponent<DefaultField> ());
+			yield return null;
+		}
+		defaultField.Sort ((a, b) => a.Id.CompareTo (b.Id));
 		field.Sort ((a, b) => a.Id.CompareTo (b.Id));
 
 
@@ -214,22 +263,24 @@ public class GameController : MonoBehaviour {
 			player.name = "_Player " + (i+1); // Game ObjName
 
 			players.Add (player.GetComponent<Player>());
-			players [i].ID = (i+1);
-			players [i].Money = startMoney; 
-			players [i].FieldId = 1;
-//			players [i].playerCamera.enabled = false; 
+			players [i].id = (i+1);
+			players [i].money = startMoney; 
+			players [i].fieldId = 1;
+			// players [i].playerCamera.enabled = false; 
 
 			//Move All player to Start Location
 			players [i].transform.position = field [0].trans [i].position;
 			yield return null ; 
 		}
 
+		
+
 		// Set who start game // Couruteen needed
-//		currentPlayer = Random.Range (0, playerCount);//Range 0 - (playerC -1)
-//		int tempPlayer = currentPlayer;
-//		for (int tempCount = playerCount; tempCount < players.Count; tempCount--) {
-//
-//		}
+		// currentPlayer = Random.Range (0, playerCount);//Range 0 - (playerC -1)
+		// int tempPlayer = currentPlayer;
+		// for (int tempCount = playerCount; tempCount < players.Count; tempCount--) {
+
+		// }
 			isInitFinish = true ; 
 	}
 
@@ -289,16 +340,22 @@ public class GameController : MonoBehaviour {
 
 	}
 
-    public Vector2 scrollPosition = Vector2.zero;
-    void OnGUI() {
-        // scrollPosition = GUI.BeginScrollView(new Rect(Screen.width/2-150, Screen.height/2-250, 300, 500), scrollPosition, new Rect(0, 0,300, 500));
-        // GUI.Button(new Rect(0, 0, 100, 20), "Top-left");
-        // GUI.Button(new Rect(120, 0, 100, 20), "Top-right");
-        // GUI.Button(new Rect(0, 180, 100, 20), "Bottom-left");
-        // GUI.Button(new Rect(120, 180, 100, 20), "Bottom-right");
-        // GUI.EndScrollView();
 
-    }
+	IEnumerator defaultFieldEvent(){
+		isShopOpen = true ; 
+		isBuyFin = false ;
+		ShopCanvas.SetActive(isShopOpen);
+		shoplist.Display (players[currentPlayer],defaultField.Find(x => x.Id== players[currentPlayer].fieldId));
+
+		yield return new WaitUntil(() => isBuyFin == true);
+		
+		isShopOpen = false  ; 
+		ShopCanvas.SetActive(isShopOpen);
+		//
+		yield return null ;
+	}
+
+
 		
 
 

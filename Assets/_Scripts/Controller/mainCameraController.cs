@@ -12,7 +12,7 @@ public class mainCameraController : MonoBehaviour {
 
 	private Transform cameraStand; 
 
-	private bool isdefault = true ; 
+	// private bool isdefault = true ; 
 
 	private bool isRotateActivate = false;
 

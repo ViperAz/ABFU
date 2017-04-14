@@ -6,18 +6,11 @@ public class EventField : Field {
 
 
 	private ActionType actionType ; 
-	public FieldType type =  FieldType.startField;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
+    public EventField()
+    {
+        type =  FieldType.startField;
+    }
 		
 	public ActionType Action {
 		get{

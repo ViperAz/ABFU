@@ -1,22 +1,76 @@
 <SeedContainer>	
 	<Seeds>
 		<Seed>
-			<Id>1</Id>
-			<Name>Rice</Name>
-			<Cost>200</Cost>
-			<Zone>1</Zone>
+			<id>1</id>
+			<name>Rice</name>
+			<cost>200</cost>
+			<zone>1</zone>
 		</Seed>
 		<Seed>
-			<Id>2</Id>
-			<Name>Grapefruit</Name>
-			<Cost>250</Cost>
-			<Zone>1</Zone>
+			<id>2</id>
+			<name>Grapefruit</name>
+			<cost>250</cost>
+			<zone>1</zone>
 		</Seed>
 		<Seed>
-			<Id>3</Id>
-			<Name>Mango</Name>
-			<Cost>300</Cost>
-			<Zone>1</Zone>
+			<id>3</id>
+			<name>Mango</name>
+			<cost>300</cost>
+			<zone>1</zone>
+		</Seed>
+		<Seed>
+			<id>4</id>
+			<name>Longan</name>
+			<cost>400</cost>
+			<zone>2</zone>
+		</Seed>
+		<Seed>
+			<id>5</id>
+			<name>Mangosteen</name>
+			<cost>450</cost>
+			<zone>2</zone>
+		</Seed>
+		<Seed>
+			<id>6</id>
+			<name>Coffee</name>
+			<cost>500</cost>
+			<zone>2</zone>
+		</Seed>
+		<Seed>
+			<id>7</id>
+			<name>Papaya</name>
+			<cost>600</cost>
+			<zone>3</zone>
+		</Seed>
+		<Seed>
+			<id>8</id>
+			<name>Tamarind</name>
+			<cost>650</cost>
+			<zone>3</zone>
+		</Seed>
+		<Seed>
+			<id>9</id>
+			<name>Pumpkin</name>
+			<cost>700</cost>
+			<zone>3</zone>
+		</Seed>
+		<Seed>
+			<id>10</id>
+			<name>Apple</name>
+			<cost>800</cost>
+			<zone>4</zone>
+		</Seed>
+		<Seed>
+			<id>11</id>
+			<name>Tea</name>
+			<cost>850</cost>
+			<zone>4</zone>
+		</Seed>
+		<Seed>
+			<id>12</id>
+			<name>Strawberry</name>
+			<cost>900</cost>
+			<zone>4</zone>
 		</Seed>
 	</Seeds>
 </SeedContainer>

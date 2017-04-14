@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+[System.Serializable]
 public class Seed : Item {
 
 	// public int Id;
@@ -10,14 +10,14 @@ public class Seed : Item {
 	// public int Cost ;
 
 	//area center = 1 south = 2 east = 3 north = 4 . 
-	public int Zone ;
+	public int zone ;
 
 	public int getStandCost(int fieldZone){
 
-		if (fieldZone == Zone) {
-			return Cost; 
+		if (fieldZone == zone) {
+			return cost; 
 		}
-		return Cost / 2; 
+		return cost / 2; 
 	}
 
 }

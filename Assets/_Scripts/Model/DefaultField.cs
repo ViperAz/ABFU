@@ -7,11 +7,10 @@ public class DefaultField : Field {
 
 	public int cost ;
 
-	public Player owner ; 
 
 	public Seed seed ; 
 
-	public FieldType type = (int) FieldType.defaultField;
+	// public FieldType type = (int) FieldType.defaultField;
 
 	public int Zone {get;set;} 
 
@@ -25,6 +24,6 @@ public class DefaultField : Field {
 		}
 	}
 
-	public Player Owner { get; set;	}
+	public Player owner ;
 
 }

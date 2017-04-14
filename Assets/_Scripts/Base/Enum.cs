@@ -4,6 +4,8 @@ using UnityEngine;
 
 public enum FieldType {
 	defaultField,
+	factoryField,
+	marketField,
 	startField,
 	cardField,
 	forestField

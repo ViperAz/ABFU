@@ -10,6 +10,8 @@ public class Field :MonoBehaviour {
 	private int id ;
 	public Transform[] trans = new Transform[4];
 
+	public FieldType type = (int) FieldType.defaultField;
+
 	public int Id {
 		get {
 			return this.id;

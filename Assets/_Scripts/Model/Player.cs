@@ -5,20 +5,21 @@ using UnityEngine;
 public class Player : MonoBehaviour {
 
 	//Default var
-	private int id ;
-	float money ;
-	string playerName ;
-	private Inventory inventory ;
+	// private int id ;
+	// float money ;
+	// string playerName ;
 	private Rigidbody rb;
 	private int currentFieldId ; 
 
-	private bool isPastStartPoint ;
+	public int buyQouta = 3 ;
+
+	private bool isPastStartPoint = false  ;
 
 	public Transform playerCamera; 
 
 
 	void Start (){
-		rb = GetComponent<Rigidbody> (); 
+		rb = GetComponent<Rigidbody> ();
 
 
 //		playerCamera = GetComponent<Camera> ();
@@ -37,35 +38,19 @@ public class Player : MonoBehaviour {
 		}
 	}
 
-	public int ID{
-		get{
-			return id;
-		}
-		set{
-			this.id = value;
-		}
+	public int id{
+		get;set;
 	}
 
-	public float Money {
-
-		get {
-			return this.money;
-		}
-		set {
-			this.money = value;
-		}
+	public float money {
+		get;set;
 	}
 
-	public string PlayerName {
-		get{
-			return this.playerName;
-		}
-		set{
-			this.playerName = value; 
-		}
+	public string playerName {
+		get;set;
 	}
 
-	public int FieldId {
+	public int fieldId {
 		get{
 			return this.currentFieldId;
 		}
