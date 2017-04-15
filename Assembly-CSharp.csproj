@@ -46,7 +46,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\BuyOut.cs" />
      <Compile Include="Assets\SimpleObjectPool.cs" />
      <Compile Include="Assets\_Scripts\Base\Action.cs" />
      <Compile Include="Assets\_Scripts\Base\Enum.cs" />
@@ -63,6 +62,7 @@
      <Compile Include="Assets\_Scripts\Model\SeedContainer.cs" />
      <Compile Include="Assets\_Scripts\Model\SeedModelHolder.cs" />
      <Compile Include="Assets\_Scripts\Model\ShopScrollList.cs" />
+     <Compile Include="Assets\_Scripts\UI\BuyOut.cs" />
      <Compile Include="Assets\_Scripts\UI\ShopButton.cs" />
      <None Include="Assets\SeedContainer.xml" />
      <None Include="Assets\DefaulField.xml" />

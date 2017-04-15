@@ -99,20 +99,27 @@ public class ShopScrollList : MonoBehaviour ,Action{
 
     private void AddButtons()
     {
-        Debug.Log(this.currentField.Id+"<<");
-         GameObject newButton = buttonObjectPool.GetObject();
-         newButton.transform.SetParent(contentPanel,false);
-        //  Debug.Log(itemList.Count);
-         ShopButton ShopButton = newButton.GetComponent<ShopButton>();
-         ShopButton.Setup(currentField, this);
+        GameObject newButton ;
+        ShopButton ShopButton;
+        if(currentField.owner == null){
+            newButton = buttonObjectPool.GetObject();
+            newButton.transform.SetParent(contentPanel,false);
+            //  Debug.Log(itemList.Count);
+            ShopButton = newButton.GetComponent<ShopButton>();
+            ShopButton.Setup(currentField, this);
+        }
         for (int i = 0; i < itemList.Count; i++) 
         {
             Seed item = itemList[i];
-            newButton = buttonObjectPool.GetObject();
-            newButton.transform.SetParent(contentPanel,false);
+            if (currentField.seed != item){
+                newButton = buttonObjectPool.GetObject();
+                newButton.transform.SetParent(contentPanel,false);
 
-            ShopButton = newButton.GetComponent<ShopButton>();
-            ShopButton.Setup(currentField,item, this);
+                ShopButton = newButton.GetComponent<ShopButton>();
+                ShopButton.Setup(currentField,item, this);
+            }
+            
+
         }
     }
     public void updateSelection(Seed seed,DefaultField field){
@@ -152,14 +159,13 @@ public class ShopScrollList : MonoBehaviour ,Action{
     }
 
     public void Confirm(){
-        if(isReadyBuy){
+        if(isReadyBuy && this.currentField != null){
             this.currentPlayer.money -= currentCost ;
             this.currentField.owner = this.currentPlayer;
             if(this.seed !=null){
                 this.currentField.seed = this.seed ;
-                
+                this.currentField.updatePlantModel((modelList.Find(x=> x.name == this.seed.name)));
             }
-            this.currentField.updatePlantModel((modelList.Find(x=> x.name == this.seed.name)));
             // Instantiate((modelList.Find(x=> x.name == this.seed.name).model),this.currentField.plantArea.position,Quaternion.identity,this.currentField.plantArea);
             if(!this.currentPlayer.owning.Contains(this.currentField)){
                 this.currentPlayer.AddField(this.currentField);
@@ -170,7 +176,7 @@ public class ShopScrollList : MonoBehaviour ,Action{
             RemoveButtons();
 
         }else{
-            updateDisplay();
+            statusText.text = "Please Select Seed to Plant";
         }
     }
 

@@ -358,7 +358,7 @@ public class GameController : MonoBehaviour {
 		Player curPlayer= players[currentPlayer];
 		Player owner  = field.owner ;
 	
-		if (owner == null && curPlayer.buyQouta >0){
+		if ((owner == null ||owner ==curPlayer) && curPlayer.buyQouta >0){
 					//No Owner
 		isShopOpen = true ; 
 		isBuyFin = false ;
@@ -372,9 +372,6 @@ public class GameController : MonoBehaviour {
 		ShopCanvas.SetActive(isShopOpen);
 		//
 		yield return null ;
-		}
-		else if (owner ==curPlayer){
-			Debug.Log("same owner buy a new one or not");
 		}
 		else{
 			//Other Owner
@@ -393,7 +390,7 @@ public class GameController : MonoBehaviour {
 					yield return new WaitUntil(() => isBuyoutFin == true);
 					BuyOutCanvas.SetActive(false);
 
-					if(isBuyOut){
+					if(isBuyOut && curPlayer.buyQouta >0){
 						isShopOpen = true ; 
 						ShopCanvas.SetActive(isShopOpen);
 						shoplist.Display (curPlayer,defaultField.Find(x => x.Id== curPlayer.fieldId));
