@@ -17,11 +17,11 @@ public class Player : MonoBehaviour {
 
 	public Transform playerCamera; 
 
+	public List<DefaultField> owning = new List<DefaultField>();
+
 
 	void Start (){
 		rb = GetComponent<Rigidbody> ();
-
-
 //		playerCamera = GetComponent<Camera> ();
 	}
 
@@ -38,17 +38,11 @@ public class Player : MonoBehaviour {
 		}
 	}
 
-	public int id{
-		get;set;
-	}
+	public int id ;
 
-	public float money {
-		get;set;
-	}
+	public int money ;
 
-	public string playerName {
-		get;set;
-	}
+	public  string playerName ;
 
 	public int fieldId {
 		get{
@@ -65,6 +59,14 @@ public class Player : MonoBehaviour {
 	}
 
 	public Material color { get; set; }
+
+	public void AddField(DefaultField field){
+		this.owning.Add(field);
+	}
+
+	public void removeField(DefaultField field){		
+		this.owning.Remove(field);
+	}
 
 
 }

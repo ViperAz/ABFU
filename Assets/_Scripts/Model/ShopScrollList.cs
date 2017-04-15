@@ -12,7 +12,7 @@ using System.IO;
 //     public float price = 1;
 // }
 
-public class ShopScrollList : MonoBehaviour {
+public class ShopScrollList : MonoBehaviour ,Action{
 
 	public SeedContainer seedBase;
     public List<Seed> itemList;
@@ -22,6 +22,7 @@ public class ShopScrollList : MonoBehaviour {
     public Transform contentPanel;
     public Player currentPlayer;
     public DefaultField currentField;
+    private Seed seed ;
     public Text myGoldDisplay;
 	public Text qoutaDisplay ; 
 
@@ -29,8 +30,11 @@ public class ShopScrollList : MonoBehaviour {
 	public Text statusText ; 
     public SimpleObjectPool buttonObjectPool;
 
-    private Seed seed ;
-    private DefaultField field ;
+    public Button confirmBtn;
+    public Button cancelBtn ;
+
+
+    // private DefaultField field ;
 
     private bool isReadyBuy =false  ;
 
@@ -60,16 +64,18 @@ public class ShopScrollList : MonoBehaviour {
             modelList.Add(temp);
 			itemList.Add(s);
 		}
-        foreach(SeedModelHolder s in modelList){
-            Debug.Log((s.model== null)? "null":"not null0");
-        }
+
+        confirmBtn.onClick.AddListener(Confirm);
+        cancelBtn.onClick.AddListener(Cancel);
     }
 
 
    public void Display(Player player,DefaultField field)
     {
+        
         currentPlayer = player;
         currentField = field ;
+        Debug.Log(currentPlayer+"==>"+this.currentField.Id);
         myGoldDisplay.text = "Money : "+currentPlayer.money.ToString();
         qoutaDisplay.text = "Qouta : "+currentPlayer.buyQouta.ToString();
         slectionText.text = "Selection : "+((this.seed == null) ? "" : this.seed.ToString());
@@ -93,6 +99,7 @@ public class ShopScrollList : MonoBehaviour {
 
     private void AddButtons()
     {
+        Debug.Log(this.currentField.Id+"<<");
          GameObject newButton = buttonObjectPool.GetObject();
          newButton.transform.SetParent(contentPanel,false);
         //  Debug.Log(itemList.Count);
@@ -110,7 +117,7 @@ public class ShopScrollList : MonoBehaviour {
     }
     public void updateSelection(Seed seed,DefaultField field){
         this.seed = seed ;
-        this.field = field ;
+        this.currentField = field ;
         updateDisplay();
     }
 
@@ -135,16 +142,16 @@ public class ShopScrollList : MonoBehaviour {
 
     public bool getStatus(){
         if (this.seed != null){
-            currentCost = this.seed.cost+this.field.cost;
+            currentCost = this.seed.cost+this.currentField.cost;
             return checkCost(currentCost);
         }
         else{
-            currentCost = this.field.cost;
+            currentCost = this.currentField.cost;
             return checkCost(currentCost);
         }
     }
 
-    public void Buy(){
+    public void Confirm(){
         if(isReadyBuy){
             this.currentPlayer.money -= currentCost ;
             this.currentField.owner = this.currentPlayer;
@@ -152,12 +159,24 @@ public class ShopScrollList : MonoBehaviour {
                 this.currentField.seed = this.seed ;
                 
             }
+            this.currentField.updatePlantModel((modelList.Find(x=> x.name == this.seed.name)));
+            // Instantiate((modelList.Find(x=> x.name == this.seed.name).model),this.currentField.plantArea.position,Quaternion.identity,this.currentField.plantArea);
+            if(!this.currentPlayer.owning.Contains(this.currentField)){
+                this.currentPlayer.AddField(this.currentField);
+            }
+            
             GameController.isBuyFin = true ; 
             this.currentPlayer.buyQouta--;
-            Instantiate((modelList.Find(x=> x.name == this.seed.name).model),this.field.plantArea.position,Quaternion.identity,this.field.plantArea);
+            RemoveButtons();
+
         }else{
             updateDisplay();
         }
+    }
+
+    public void Cancel(){
+         GameController.isBuyFin = true ; 
+         RemoveButtons();
     }
 
     

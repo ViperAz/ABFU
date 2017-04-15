@@ -51,9 +51,20 @@ public class GameController : MonoBehaviour {
 
 
 	public GameObject ShopCanvas ; 
+	public GameObject BuyOutCanvas;
 	public bool isShopOpen = false ; 
+
+	//Buy shop
 	public static bool isBuyFin = false ;
+
+	//Buy out
+	public static bool isBuyoutFin = false;
+	public static bool isBuyOut = false ;
 	public ShopScrollList  shoplist ; 
+	public BuyOut buyout;
+
+	public static int globalMultiplyer = 1;
+	public static float Tax = 0.3f ;
 
 	// Use this for initialization
 	void Start () {
@@ -81,6 +92,11 @@ public class GameController : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.Space) && !isGameMoving) {
 			StartCoroutine( playerTurn ());
 		}
+		
+		
+		
+		
+
 
 
 				
@@ -116,8 +132,10 @@ public class GameController : MonoBehaviour {
 		// switchCamera (currentPlayer, false);
 
 		currentPlayer = (currentPlayer + 1) %playerCount ;
-		Debug.Log (currentPlayer);
-		currentTurn++;
+		// Debug.Log (currentPlayer);
+		if (currentPlayer == 0){
+			this.turn -- ;
+		}
 		isGameMoving = false;
 		isOtherFinish = true; 
 
@@ -222,7 +240,7 @@ public class GameController : MonoBehaviour {
 	// }
 	//Set up the Game . 
 	IEnumerator setUp(){
-
+		BuyOutCanvas.SetActive(false);
 		ShopCanvas.SetActive(isShopOpen);
 		players.Clear();
 		field.Clear ();
@@ -337,12 +355,16 @@ public class GameController : MonoBehaviour {
 
 	IEnumerator defaultFieldEvent(){
 		DefaultField field = defaultField.Find(x => x.Id== players[currentPlayer].fieldId);
-		if (field.owner == null &&  players[currentPlayer].buyQouta >0){
+		Player curPlayer= players[currentPlayer];
+		Player owner  = field.owner ;
+	
+		if (owner == null && curPlayer.buyQouta >0){
 					//No Owner
 		isShopOpen = true ; 
 		isBuyFin = false ;
 		ShopCanvas.SetActive(isShopOpen);
-		shoplist.Display (players[currentPlayer],defaultField.Find(x => x.Id== players[currentPlayer].fieldId));
+		Debug.Log(defaultField.Find(x => x.Id== curPlayer.fieldId).ToString());
+		shoplist.Display (curPlayer,defaultField.Find(x => x.Id== curPlayer.fieldId));
 
 		yield return new WaitUntil(() => isBuyFin == true);
 		
@@ -351,23 +373,45 @@ public class GameController : MonoBehaviour {
 		//
 		yield return null ;
 		}
-		else if (field.owner == players[currentPlayer]){
+		else if (owner ==curPlayer){
 			Debug.Log("same owner buy a new one or not");
 		}
 		else{
 			//Other Owner
-			Debug.Log("lose money and begin buy bitches");
+			int standCost = field.getStandCost();
+			int buyoutPrice =field.getBuyOutPrice();
+			//Reduce Money here
+			if(curPlayer.money > standCost){
+				curPlayer.money -=  standCost; 
+				if(curPlayer.money >= buyoutPrice){
+					//Buy out here
+					isBuyFin = false ;
+					isBuyOut = false ;
+					isBuyoutFin = false ;
+					BuyOutCanvas.SetActive(true);
+					buyout.Display(curPlayer,defaultField.Find(x => x.Id== curPlayer.fieldId));
+					yield return new WaitUntil(() => isBuyoutFin == true);
+					BuyOutCanvas.SetActive(false);
+
+					if(isBuyOut){
+						isShopOpen = true ; 
+						ShopCanvas.SetActive(isShopOpen);
+						shoplist.Display (curPlayer,defaultField.Find(x => x.Id== curPlayer.fieldId));
+						yield return new WaitUntil(() => isBuyFin == true);
+						isShopOpen = false  ; 
+						ShopCanvas.SetActive(isShopOpen);
+					}
+			yield return null ;
+				}
+			}
+			else{
+				//Debt here
+			}
+			yield return null ;	
 		}
 
 
 	}
-
-	
-
-
-		
-
-
 
 //	private void switchCamera (int currentPlayer,bool mode){
 //		Debug.Log ("Changing Camera to Player"+ (currentPlayer+1)+"Mode"+mode);

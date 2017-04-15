@@ -46,11 +46,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\DragPane.cs" />
+     <Compile Include="Assets\BuyOut.cs" />
      <Compile Include="Assets\SimpleObjectPool.cs" />
+     <Compile Include="Assets\_Scripts\Base\Action.cs" />
      <Compile Include="Assets\_Scripts\Base\Enum.cs" />
      <Compile Include="Assets\_Scripts\Base\Field.cs" />
-     <Compile Include="Assets\_Scripts\Base\IField.cs" />
      <Compile Include="Assets\_Scripts\Base\RandomNum.cs" />
      <Compile Include="Assets\_Scripts\Controller\GameController.cs" />
      <Compile Include="Assets\_Scripts\Controller\GameManager.cs" />
@@ -63,10 +63,9 @@
      <Compile Include="Assets\_Scripts\Model\SeedContainer.cs" />
      <Compile Include="Assets\_Scripts\Model\SeedModelHolder.cs" />
      <Compile Include="Assets\_Scripts\Model\ShopScrollList.cs" />
-     <Compile Include="Assets\_Scripts\UI\CancelButton.cs" />
-     <Compile Include="Assets\_Scripts\UI\ConfirmButton.cs" />
      <Compile Include="Assets\_Scripts\UI\ShopButton.cs" />
      <None Include="Assets\SeedContainer.xml" />
+     <None Include="Assets\DefaulField.xml" />
  <Reference Include="UnityEngine.UI">
  <HintPath>E:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

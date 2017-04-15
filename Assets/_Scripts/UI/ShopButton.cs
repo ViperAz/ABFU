@@ -24,7 +24,7 @@ public class ShopButton : MonoBehaviour {
         item = currentItem;
         field = currentField ;
         nameLabel.text = item.name;
-        priceText.text = (item.cost+field.fieldCost).ToString ()+" Baht.";
+        priceText.text = (item.cost+field.cost).ToString ()+" Baht.";
         scrollList = currentScrollList;
         buttonComponent.onClick.AddListener (HandleClickSeed);
         
@@ -33,14 +33,13 @@ public class ShopButton : MonoBehaviour {
     public void Setup(DefaultField currentField, ShopScrollList currentScrollList){
          field = currentField ;
          nameLabel.text = "Land";
-         priceText.text = currentField.fieldCost.ToString()+ " Baht.";
+         priceText.text = currentField.cost.ToString()+ " Baht.";
          scrollList = currentScrollList;
          buttonComponent.onClick.AddListener (HandleClickField);
 
     }
 
     public void HandleClickSeed(){
-
         scrollList.updateSelection(item,field);
 
     }

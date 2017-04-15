@@ -22,6 +22,10 @@ public class Field :MonoBehaviour {
 			this.id = value;
 		}
 	}
+
+	public void Plant(){
+
+	}
 		
 
 
