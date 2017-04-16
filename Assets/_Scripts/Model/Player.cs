@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI ;
 
 public class Player : MonoBehaviour {
 
@@ -8,6 +9,7 @@ public class Player : MonoBehaviour {
 	// private int id ;
 	// float money ;
 	// string playerName ;
+	
 	private Rigidbody rb;
 	private int currentFieldId ; 
 
@@ -20,8 +22,15 @@ public class Player : MonoBehaviour {
 	public List<DefaultField> owning = new List<DefaultField>();
 
 
+	public PlayerUI ui ;
+	private int netWorth = 0;
+
+
+
 	void Start (){
 		rb = GetComponent<Rigidbody> ();
+		this.netWorth = money ;
+		ui.SetUp(this.playerName,this.money,this.netWorth);
 //		playerCamera = GetComponent<Camera> ();
 	}
 
@@ -53,10 +62,7 @@ public class Player : MonoBehaviour {
 		}
 	}
 
-	public bool isPastStart {
-		get{return this.isPastStartPoint ; }
-		set{this.isPastStartPoint = value ;}
-	}
+	public bool isPastStart ;
 
 	public Material color { get; set; }
 
@@ -66,6 +72,23 @@ public class Player : MonoBehaviour {
 
 	public void removeField(DefaultField field){		
 		this.owning.Remove(field);
+	}
+
+	private void updateMoney (){
+		ui.updateMoney(this.money);
+	}
+
+	private void updateNetWorth(){
+		netWorth = money;
+		foreach(DefaultField g in this.owning){
+			netWorth += g.getBuyOutPrice();
+		}
+		ui.updateNetWorth(this.netWorth);
+			}
+
+	public void updateUI(){
+		updateMoney ();
+		updateNetWorth();
 	}
 
 

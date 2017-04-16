@@ -59,6 +59,7 @@ public class GameController : MonoBehaviour {
 
 	public GameObject RollBtnCanvas ;
 	public List<GameObject> DiceCanvas = new  List<GameObject>();
+	public List<GameObject> playerCanvas = new List<GameObject>();
 	public bool isShopOpen = false ; 
 
 	//Buy shop
@@ -301,15 +302,24 @@ public class GameController : MonoBehaviour {
 		boardLength = field.Count; 
 
 
+		foreach(GameObject g in GameObject.FindGameObjectsWithTag("PlayerUI")){
+			g.SetActive(false);
+			playerCanvas.Add(g);
+		}
+		playerCanvas.Sort((a,b) => a.GetComponent<PlayerUI>().id.CompareTo (b.GetComponent<PlayerUI>().id));
+
 		for (int i = 0; i < playerCount; i++) {
 			GameObject player = (GameObject) Instantiate (Resources.Load("Prefabs/Player/Player")) ; 
 			player.tag = "Players";
 			player.name = "_Player " + (i+1); // Game ObjName
 
 			players.Add (player.GetComponent<Player>());
+			players[i].playerName = "Player "+(i+1);
 			players [i].id = (i+1);
 			players [i].money = startMoney; 
 			players [i].fieldId = 1;
+			players[i].ui = playerCanvas[i].GetComponent<PlayerUI>();
+			playerCanvas[i].SetActive(true);
 			// players [i].playerCamera.enabled = false; 
 
 			//Move All player to Start Location
@@ -400,6 +410,8 @@ public class GameController : MonoBehaviour {
 		shoplist.Display (curPlayer,defaultField.Find(x => x.Id== curPlayer.fieldId));
 
 		yield return new WaitUntil(() => isBuyFin == true);
+
+		curPlayer.updateUI();
 		
 		isShopOpen = false  ; 
 		ShopCanvas.SetActive(isShopOpen);
@@ -413,6 +425,9 @@ public class GameController : MonoBehaviour {
 			//Reduce Money here
 			if(curPlayer.money > standCost){
 				curPlayer.money -=  standCost; 
+				owner.money += standCost;
+				owner.updateUI();
+				curPlayer.updateUI();
 				if(curPlayer.money >= buyoutPrice){
 					//Buy out here
 					isBuyFin = false ;
@@ -422,7 +437,8 @@ public class GameController : MonoBehaviour {
 					buyout.Display(curPlayer,defaultField.Find(x => x.Id== curPlayer.fieldId));
 					yield return new WaitUntil(() => isBuyoutFin == true);
 					BuyOutCanvas.SetActive(false);
-
+					owner.updateUI();
+					curPlayer.updateUI();
 					if(isBuyOut && curPlayer.buyQouta >0){
 						isShopOpen = true ; 
 						ShopCanvas.SetActive(isShopOpen);
@@ -430,6 +446,8 @@ public class GameController : MonoBehaviour {
 						yield return new WaitUntil(() => isBuyFin == true);
 						isShopOpen = false  ; 
 						ShopCanvas.SetActive(isShopOpen);
+						owner.updateUI();
+						curPlayer.updateUI();
 					}
 			yield return null ;
 				}
