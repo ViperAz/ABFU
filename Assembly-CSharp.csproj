@@ -55,6 +55,7 @@
      <Compile Include="Assets\_Scripts\Controller\GameManager.cs" />
      <Compile Include="Assets\_Scripts\Controller\mainCameraController.cs" />
      <Compile Include="Assets\_Scripts\Model\DefaultField.cs" />
+     <Compile Include="Assets\_Scripts\Model\Dice.cs" />
      <Compile Include="Assets\_Scripts\Model\EventField.cs" />
      <Compile Include="Assets\_Scripts\Model\Item.cs" />
      <Compile Include="Assets\_Scripts\Model\Player.cs" />
@@ -63,6 +64,7 @@
      <Compile Include="Assets\_Scripts\Model\SeedModelHolder.cs" />
      <Compile Include="Assets\_Scripts\Model\ShopScrollList.cs" />
      <Compile Include="Assets\_Scripts\UI\BuyOut.cs" />
+     <Compile Include="Assets\_Scripts\UI\DiceUI.cs" />
      <Compile Include="Assets\_Scripts\UI\ShopButton.cs" />
      <None Include="Assets\SeedContainer.xml" />
      <None Include="Assets\DefaulField.xml" />

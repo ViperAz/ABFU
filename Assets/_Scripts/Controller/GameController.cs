@@ -22,6 +22,8 @@ public class GameController : MonoBehaviour {
 	//All Field for calculate Walking
 	public static List<Field> field  = new List<Field>();
 	public List<DefaultField> defaultField = new List<DefaultField>();
+
+	public List<Dice> dice = new List<Dice>();
 	public RandomNum[] rans = new RandomNum[12] ;
 
 	//Seed Collection 
@@ -41,6 +43,8 @@ public class GameController : MonoBehaviour {
 	public float moveTime ; // in sec
 	private float inverseMoveTime;
 
+
+
 	public static bool isInitFinish = false ; 
 	private bool isGameOver = false;
 	private bool isGameMoving = false;
@@ -52,6 +56,9 @@ public class GameController : MonoBehaviour {
 
 	public GameObject ShopCanvas ; 
 	public GameObject BuyOutCanvas;
+
+	public GameObject RollBtnCanvas ;
+	public List<GameObject> DiceCanvas = new  List<GameObject>();
 	public bool isShopOpen = false ; 
 
 	//Buy shop
@@ -60,6 +67,8 @@ public class GameController : MonoBehaviour {
 	//Buy out
 	public static bool isBuyoutFin = false;
 	public static bool isBuyOut = false ;
+
+	public static bool isRollPress = false ;
 	public ShopScrollList  shoplist ; 
 	public BuyOut buyout;
 
@@ -87,9 +96,7 @@ public class GameController : MonoBehaviour {
 			cameraUpdate ();
 		}
 		
-
-		//demo moving
-		if (Input.GetKeyDown (KeyCode.Space) && !isGameMoving) {
+		if (!isGameMoving && isOtherFinish) {
 			StartCoroutine( playerTurn ());
 		}
 		
@@ -108,10 +115,30 @@ public class GameController : MonoBehaviour {
 	IEnumerator playerTurn(){
 		isGameMoving = true;
 		isOtherFinish = false ;
+		isRollPress = false;
 		// switchCamera (currentPlayer, true);
+		Debug.Log("sassa");
+		RollBtnCanvas.SetActive(!isRollPress);
+		yield return new WaitUntil(() => isRollPress == true);
+		RollBtnCanvas.SetActive(!isRollPress);
+		foreach(GameObject g in DiceCanvas){
+			g.SetActive(true);
+		}
+		foreach(Dice d in dice){
+			d.RollTheDice();
+		}
+		int diceNum = 0;
+		foreach(Dice d in dice){
+			yield return new WaitUntil(() => d.IsDiceRolling() == false);
+			diceNum += d.DicedNumber();
+		}
+		
+		yield return new WaitForSeconds(1.0f);
 
-		//Demo replace Dice  not live yet
-		int diceNum = 1;
+		foreach(GameObject g in DiceCanvas){
+			g.SetActive(false);
+		}
+
 		Debug.Log ("Dice num :" + diceNum);
 
 
@@ -136,6 +163,7 @@ public class GameController : MonoBehaviour {
 		if (currentPlayer == 0){
 			this.turn -- ;
 		}
+		Debug.Log("why i am early");
 		isGameMoving = false;
 		isOtherFinish = true; 
 
@@ -212,7 +240,6 @@ public class GameController : MonoBehaviour {
 			yield return new WaitForSeconds (0.3f);
 		}
 		players [currentPlayer].fieldId = currentField;  
-		isGameMoving = false;
 		Debug.Log ("Current Player"+ players[currentPlayer].playerName+"\n"+
 			"After Move :\n" +
 			" Current Field Id : "+currentField);
@@ -241,22 +268,24 @@ public class GameController : MonoBehaviour {
 	//Set up the Game . 
 	IEnumerator setUp(){
 		BuyOutCanvas.SetActive(false);
-		ShopCanvas.SetActive(isShopOpen);
+		ShopCanvas.SetActive(false);
+		RollBtnCanvas.SetActive(false);
 		players.Clear();
-		field.Clear ();
+		field.Clear();
+		dice.Clear();
+		defaultField.Clear();
+		DiceCanvas.Clear();
+
 
 		inverseMoveTime = 1f / moveTime;
 		isOtherFinish = true; 
 		isChangeFinished = false;
 
-		//Load in Data 
-		// seedLst = SeedContainer.Load (Path.Combine (Application.dataPath, "SeedContainer.xml"));
-
-		// Debug.Log(seedLst.Seeds.Count);
-
-		// foreach (Seed s in seedLst.Seeds){
-		// 	Debug.Log(s.Name+" "+s.Cost);
-		// }
+		foreach (GameObject g in GameObject.FindGameObjectsWithTag("Dice")) {
+			dice.Add (g.GetComponent<Dice> ());
+			DiceCanvas.Add(g);
+			yield return null;
+		}
 		foreach (GameObject g in GameObject.FindGameObjectsWithTag("Fields")) {
 			field.Add (g.GetComponent<Field> ());
 			yield return null;
@@ -286,6 +315,10 @@ public class GameController : MonoBehaviour {
 			//Move All player to Start Location
 			players [i].transform.position = field [0].trans [i].position;
 			yield return null ; 
+		}
+
+		foreach(GameObject g in DiceCanvas){
+			g.SetActive(false);
 		}
 
 		
