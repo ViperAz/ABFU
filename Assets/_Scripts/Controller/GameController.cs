@@ -117,8 +117,6 @@ public class GameController : MonoBehaviour {
 		isGameMoving = true;
 		isOtherFinish = false ;
 		isRollPress = false;
-		// switchCamera (currentPlayer, true);
-		Debug.Log("sassa");
 		RollBtnCanvas.SetActive(!isRollPress);
 		yield return new WaitUntil(() => isRollPress == true);
 		RollBtnCanvas.SetActive(!isRollPress);
@@ -164,9 +162,10 @@ public class GameController : MonoBehaviour {
 		if (currentPlayer == 0){
 			this.turn -- ;
 		}
-		Debug.Log("why i am early");
+
 		isGameMoving = false;
 		isOtherFinish = true; 
+		changePlayerCam();
 
 	}
 
@@ -309,6 +308,7 @@ public class GameController : MonoBehaviour {
 		playerCanvas.Sort((a,b) => a.GetComponent<PlayerUI>().id.CompareTo (b.GetComponent<PlayerUI>().id));
 
 		for (int i = 0; i < playerCount; i++) {
+			Debug.Log("player has been created");
 			GameObject player = (GameObject) Instantiate (Resources.Load("Prefabs/Player/Player")) ; 
 			player.tag = "Players";
 			player.name = "_Player " + (i+1); // Game ObjName
@@ -342,8 +342,11 @@ public class GameController : MonoBehaviour {
 			isInitFinish = true ; 
 	}
 
+
+
+	//Camera Section
 	IEnumerator switchCamera  (Transform trans){
-		StartCoroutine (cameraController.setRotation(trans.eulerAngles));
+		// StartCoroutine (cameraController.setRotation(trans.eulerAngles));
 		yield return StartCoroutine (cameraController.moveCameraTo(trans));
 
 		isChangeFinished = true;
@@ -351,8 +354,14 @@ public class GameController : MonoBehaviour {
 
 
 	}
+
+	void changePlayerCam(){
+		if ((playerCamMode == 0)) {
+			isChangeFinished = !isChangeFinished;
+		}
+	}
 	void cameraUpdate(){
-		//State Camera Section had nothing to do with the game play
+		//State Camera Section had nothing to do with the game play	
 		if ((playerCamMode == 0) && !isChangeFinished) {
 			cameraController.DetachFromParent ();
 
@@ -406,7 +415,7 @@ public class GameController : MonoBehaviour {
 		isShopOpen = true ; 
 		isBuyFin = false ;
 		ShopCanvas.SetActive(isShopOpen);
-		Debug.Log(defaultField.Find(x => x.Id== curPlayer.fieldId).ToString());
+		// Debug.Log(defaultField.Find(x => x.Id== curPlayer.fieldId).ToString());
 		shoplist.Display (curPlayer,defaultField.Find(x => x.Id== curPlayer.fieldId));
 
 		yield return new WaitUntil(() => isBuyFin == true);

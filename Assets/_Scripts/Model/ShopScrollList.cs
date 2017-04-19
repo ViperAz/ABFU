@@ -110,24 +110,39 @@ public class ShopScrollList : MonoBehaviour ,Action{
             ShopButton = newButton.GetComponent<ShopButton>();
             ShopButton.Setup(currentField, this);
         }
-        for (int i = 0; i < itemList.Count; i++) 
-        {
-            Seed item = itemList[i];
-            if (currentField.seed != item){
-                newButton = buttonObjectPool.GetObject();
-                newButton.transform.SetParent(contentPanel,false);
+        if(this.currentField.type == FieldType.defaultField){
+            for (int i = 0; i < itemList.Count; i++) {
+                Seed item = itemList[i];
+            
+                if (currentField.seed != item){
+                    Debug.Log(item.name);
+                    newButton = buttonObjectPool.GetObject();
+                    newButton.transform.SetParent(contentPanel,false);
 
-                ShopButton = newButton.GetComponent<ShopButton>();
-                ShopButton.Setup(currentField,item, this);
-            }
+                    ShopButton = newButton.GetComponent<ShopButton>();
+                    ShopButton.Setup(currentField,item, this);
+                }
             
 
+            }
         }
+
     }
     public void updateSelection(Seed seed,DefaultField field){
+        
         this.seed = seed ;
         this.field = field ;
         updateDisplay();
+        Debug.Log(this.seed);
+        
+    }
+    public void updateSelection(DefaultField field){
+        
+        this.seed = null ;
+        this.field = field ;
+        updateDisplay();
+        Debug.Log(this.seed);
+        
     }
 
     public void updateDisplay(){

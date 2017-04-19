@@ -15,7 +15,7 @@ public class Player : MonoBehaviour {
 
 	public int buyQouta = 3 ;
 
-	private bool isPastStartPoint = false  ;
+	public bool isPastStartPoint = false  ;
 
 	public Transform playerCamera; 
 
@@ -52,6 +52,7 @@ public class Player : MonoBehaviour {
 	public int money ;
 
 	public  string playerName ;
+	
 
 	public int fieldId {
 		get{

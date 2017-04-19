@@ -21,12 +21,14 @@ public class ShopButton : MonoBehaviour {
     //Set up  Field Buy and seed 
     public void Setup(DefaultField currentField,Seed currentItem, ShopScrollList currentScrollList)
     {
+        
         item = currentItem;
         field = currentField ;
         nameLabel.text = item.name;
         priceText.text = (item.cost+field.cost).ToString ()+" Baht.";
         scrollList = currentScrollList;
         buttonComponent.onClick.AddListener (HandleClickSeed);
+        Debug.Log(item);
         
     }
     // Set up Only Field Buy
@@ -44,8 +46,8 @@ public class ShopButton : MonoBehaviour {
 
     }
     public void HandleClickField(){
-        item = null ;
-        scrollList.updateSelection(item,field);
+        // item = null ;
+        scrollList.updateSelection(field);
 
     }
 
