@@ -7,8 +7,12 @@ public enum FieldType {
 	factoryField,
 	marketField,
 	startField,
-	cardField,
-	forestField
+	TrainField,
+	forestField,
+
+	goToForestField,
+
+	LotteryField
 }
 
 public enum ActionType {

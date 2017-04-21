@@ -65,6 +65,8 @@ public class GameController : MonoBehaviour {
 	//Buy shop
 	public static bool isBuyFin = false ;
 
+	int diceNum = 0 ;
+
 	//Buy out
 	public static bool isBuyoutFin = false;
 	public static bool isBuyOut = false ;
@@ -93,52 +95,44 @@ public class GameController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		//Check Game State Section
+
+		//Check winner
+
+		
 		if (isInitFinish){
 			cameraUpdate ();
 		}
 		
-		if (!isGameMoving && isOtherFinish) {
+		if (!isGameMoving && isOtherFinish && isInitFinish) {
 			StartCoroutine( playerTurn ());
 		}
 		
 		
 		
-		
-
-
-
-				
-
 
 	}
 
 
 	IEnumerator playerTurn(){
+
+		if (players[currentPlayer].isMissNextTurn){
+			players[currentPlayer].isMissNextTurn = false ;
+			currentPlayer = (currentPlayer + 1) %playerCount ;
+			if (currentPlayer == 0){
+				this.turn -- ;
+			}
+			changePlayerCam();
+			yield break;
+		}
 		isGameMoving = true;
 		isOtherFinish = false ;
-		isRollPress = false;
-		RollBtnCanvas.SetActive(!isRollPress);
-		yield return new WaitUntil(() => isRollPress == true);
-		RollBtnCanvas.SetActive(!isRollPress);
-		foreach(GameObject g in DiceCanvas){
-			g.SetActive(true);
-		}
-		foreach(Dice d in dice){
-			d.RollTheDice();
-		}
-		int diceNum = 0;
-		foreach(Dice d in dice){
-			yield return new WaitUntil(() => d.IsDiceRolling() == false);
-			diceNum += d.DicedNumber();
-		}
-		
-		yield return new WaitForSeconds(1.0f);
 
-		foreach(GameObject g in DiceCanvas){
-			g.SetActive(false);
-		}
+
+		yield return RollTheDice();
 
 		Debug.Log ("Dice num :" + diceNum);
+
+		diceNum = 35 ;
 
 
 		//Move player to Center of the cell 
@@ -165,8 +159,33 @@ public class GameController : MonoBehaviour {
 
 		isGameMoving = false;
 		isOtherFinish = true; 
+		yield return new WaitForSeconds(1.5f);
 		changePlayerCam();
 
+	}
+
+	IEnumerator RollTheDice(){
+		isRollPress = false;
+		diceNum = 0;
+		RollBtnCanvas.SetActive(!isRollPress);
+		yield return new WaitUntil(() => isRollPress == true);
+		RollBtnCanvas.SetActive(!isRollPress);
+		foreach(GameObject g in DiceCanvas){
+			g.SetActive(true);
+		}
+		foreach(Dice d in dice){
+			d.RollTheDice();
+		}
+		foreach(Dice d in dice){
+			yield return new WaitUntil(() => d.IsDiceRolling() == false);
+			diceNum += d.DicedNumber();
+		}
+		
+		yield return new WaitForSeconds(1.0f);
+
+		foreach(GameObject g in DiceCanvas){
+			g.SetActive(false);
+		}
 	}
 
 	IEnumerator checkField (){
@@ -185,16 +204,21 @@ public class GameController : MonoBehaviour {
 					break ; 
 				}
 				case FieldType.startField : {
-					Debug.Log("sa");
+					Debug.Log("Do nothing eiei");
 					break ; 
 				}
-				case FieldType.cardField :{
-					Debug.Log("ca");
+				case FieldType.TrainField :{
+					yield return StartCoroutine(TrainEvent());
 					break ; 
 				}
 				case FieldType.forestField :{
-					Debug.Log("fo");
+					players[currentPlayer].isMissNextTurn = true ;
 					break ; 
+				}case FieldType.goToForestField :{
+					yield return StartCoroutine(goToForestEvent());
+					break;
+				}case FieldType.LotteryField : {
+					break;
 				}
 				
 
@@ -208,12 +232,7 @@ public class GameController : MonoBehaviour {
 
 
 
-	//Not used
-	void movePlayer(int currentPlayer, int diceNum){
-		//move to target position
-		StartCoroutine(Move(currentPlayer,diceNum));
-		//Check event
-	}
+
 
 	protected IEnumerator Move(int currentPlayer, int diceNum){
 		//Field Index not Field Id (if Id = index +1)
@@ -223,7 +242,6 @@ public class GameController : MonoBehaviour {
 			"Current Field Id : "+currentField);
 
 		yield return new WaitForSeconds (0.3f);
-		//Need to disable all player while doing this action ** Not implemented
 
 		//Make player move 1 slot per times
 		for (int i = 0; i < diceNum; i++) {
@@ -232,12 +250,19 @@ public class GameController : MonoBehaviour {
 
 			yield return StartCoroutine(aTob(players[currentPlayer], field [currentField].transform.position));
 			currentField = (currentField + 1 ) % boardLength; 
-
+			
+			
+			if (field[currentField].type == FieldType.startField){
+				players[currentPlayer].money += 1000+(int)(players[currentPlayer].getSeedNetWorth()) ;
+				players[currentPlayer].buyQouta = 3 ;
+				players[currentPlayer].updateUI();
+				//Log here
+			}
 			// Check current that player stand Field here
 			// yield return checkField(currentField-1);
 
 			//wait for 0.3 sec then move to nextPos
-			yield return new WaitForSeconds (0.3f);
+			yield return new WaitForSeconds (0.1f);
 		}
 		players [currentPlayer].fieldId = currentField;  
 		Debug.Log ("Current Player"+ players[currentPlayer].playerName+"\n"+
@@ -257,6 +282,7 @@ public class GameController : MonoBehaviour {
 			sqrRemainingDistance = (player.transform.position - nextPos).sqrMagnitude; 
 			yield return null;
 		}
+		Debug.Log("i move");
 
 	}
 
@@ -468,6 +494,30 @@ public class GameController : MonoBehaviour {
 		}
 
 
+	}
+
+
+	IEnumerator goToForestEvent(){
+		int currentField = players[currentPlayer].fieldId;
+
+		while(field [currentField-1].type != FieldType.forestField){
+			
+			currentField = (currentField - 1 ) % boardLength; 
+			yield return StartCoroutine(aTob(players[currentPlayer], field [currentField].transform.position));
+			Debug.Log(currentField);
+			// yield return new WaitForSeconds(0.3f);
+
+		}
+		players [currentPlayer].fieldId = currentField;  
+
+		yield return null ;
+	}
+
+	IEnumerator TrainEvent(){
+		int currentField = players[currentPlayer].fieldId;
+		currentField = (currentField + 20 ) % boardLength; 
+		yield return StartCoroutine(aTob(players[currentPlayer], field [currentField-1].transform.position)) ;
+		players [currentPlayer].fieldId = currentField;  
 	}
 
 //	private void switchCamera (int currentPlayer,bool mode){

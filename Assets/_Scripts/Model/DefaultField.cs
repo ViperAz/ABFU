@@ -33,8 +33,9 @@ public class DefaultField : Field {
 				Destroy(t.gameObject);
 			}
 		}
-
-		Instantiate(seed.model,this.plantArea.position,Quaternion.identity,this.plantArea);
+		
+		GameObject obj = (GameObject )Instantiate(seed.model,this.plantArea.position,Quaternion.identity);
+		obj.transform.SetParent(this.plantArea);
 
 	}
 	//Need stock multiplyer

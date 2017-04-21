@@ -15,7 +15,7 @@ public class Player : MonoBehaviour {
 
 	public int buyQouta = 3 ;
 
-	public bool isPastStartPoint = false  ;
+	public bool isMissNextTurn = false  ;
 
 	public Transform playerCamera; 
 
@@ -85,7 +85,16 @@ public class Player : MonoBehaviour {
 			netWorth += g.getBuyOutPrice();
 		}
 		ui.updateNetWorth(this.netWorth);
-			}
+	}
+
+
+	public int getSeedNetWorth(){
+		int temp  = 0 ;
+		foreach(DefaultField f in owning){
+			temp += f.seed.cost ;
+		}
+		return (int)(temp*0.1) ;
+	}
 
 	public void updateUI(){
 		updateMoney ();
