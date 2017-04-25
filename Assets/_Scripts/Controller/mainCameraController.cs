@@ -23,10 +23,13 @@ public class mainCameraController : MonoBehaviour {
 
 	private Camera mainCamera ; 
 
+	public FreeFly freefly ;
 
 
 	// Use this for initialization
 	void Start () {
+
+		freefly.enabled = false ;
 
 		inverseMoveTime = 1 / camSpeed; 
 

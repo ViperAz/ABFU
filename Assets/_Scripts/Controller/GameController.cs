@@ -57,6 +57,8 @@ public class GameController : MonoBehaviour {
 	public GameObject ShopCanvas ; 
 	public GameObject BuyOutCanvas;
 
+	public GameObject LotteryCanvas ;
+
 	public GameObject RollBtnCanvas ;
 	public List<GameObject> DiceCanvas = new  List<GameObject>();
 	public List<GameObject> playerCanvas = new List<GameObject>();
@@ -74,6 +76,8 @@ public class GameController : MonoBehaviour {
 	public static bool isRollPress = false ;
 	public ShopScrollList  shoplist ; 
 	public BuyOut buyout;
+
+	public LuckyDraw luckydraw ;
 
 	public static int globalMultiplyer = 1;
 	public static float Tax = 0.3f ;
@@ -102,14 +106,24 @@ public class GameController : MonoBehaviour {
 		if (isInitFinish){
 			cameraUpdate ();
 		}
+
 		
 		if (!isGameMoving && isOtherFinish && isInitFinish) {
-			StartCoroutine( playerTurn ());
+			if(!checkWinner()){
+				StartCoroutine( playerTurn ());
+			}else{
+
+			}
+			
 		}
 		
 		
 		
 
+	}
+
+	bool checkWinner(){
+		return false ;
 	}
 
 
@@ -128,11 +142,12 @@ public class GameController : MonoBehaviour {
 		isOtherFinish = false ;
 
 
-		yield return RollTheDice();
+		yield return StartCoroutine(RollTheDice());
 
 		Debug.Log ("Dice num :" + diceNum);
 
-		diceNum = 35 ;
+
+
 
 
 		//Move player to Center of the cell 
@@ -218,6 +233,7 @@ public class GameController : MonoBehaviour {
 					yield return StartCoroutine(goToForestEvent());
 					break;
 				}case FieldType.LotteryField : {
+					yield return StartCoroutine(LotterlyEvent());
 					break;
 				}
 				
@@ -383,33 +399,45 @@ public class GameController : MonoBehaviour {
 
 	void changePlayerCam(){
 		if ((playerCamMode == 0)) {
-			isChangeFinished = !isChangeFinished;
+			isChangeFinished = false;
+			cameraController.freefly.enabled = false ;
 		}
 	}
 	void cameraUpdate(){
+
 		//State Camera Section had nothing to do with the game play	
 		if ((playerCamMode == 0) && !isChangeFinished) {
+			Cursor.visible = true ;
+			Cursor.lockState = CursorLockMode.None;
+			cameraController.freefly.enabled = false ;
 			cameraController.DetachFromParent ();
 
 			cameraController.changeFocus (players [currentPlayer].transform);
 			StartCoroutine (switchCamera (players [currentPlayer].playerCamera));
 			cameraController.SetParent (players [currentPlayer].transform);
 
-		} else if ((playerCamMode == 1) && !isChangeFinished) {
+		// } else if ((playerCamMode == 1) && !isChangeFinished) {
+		// 	Cursor.visible = true ;
+		// 	Cursor.lockState = CursorLockMode.None;
+		// 	cameraController.freefly.enabled = false ;
+		// 	cameraController.DetachFromParent ();
+		// 	cameraController.resetFocus ();
+		// 	cameraController.changeFocus (cameraController.target);
+		// 	StartCoroutine (switchCamera (topTrans));
+		// 	cameraController.SetParent (topTrans);
+		} else if ((playerCamMode == 1 || playerCamMode == 2) && !isChangeFinished) {
+			Cursor.visible = false ;
+			Cursor.lockState = CursorLockMode.Locked;
 			cameraController.DetachFromParent ();
 			cameraController.resetFocus ();
-			cameraController.changeFocus (cameraController.target);
-			StartCoroutine (switchCamera (topTrans));
-			cameraController.SetParent (topTrans);
-		} else if ((playerCamMode == 2) && !isChangeFinished) {
-			cameraController.DetachFromParent ();
-			cameraController.resetFocus ();
-			StartCoroutine (switchCamera (sideTrans));
-			cameraController.SetParent (sideTrans);
+			cameraController.freefly.enabled = true ;
+			isChangeFinished = true;
+			
 		}
 
 
 		if (Input.GetKeyDown (KeyCode.F)) {
+			Debug.Log("Player cam"+playerCamMode);
 			playerCamMode = (playerCamMode + 1) % 3;
 			isChangeFinished = !isChangeFinished;
 		}
@@ -518,6 +546,15 @@ public class GameController : MonoBehaviour {
 		currentField = (currentField + 20 ) % boardLength; 
 		yield return StartCoroutine(aTob(players[currentPlayer], field [currentField-1].transform.position)) ;
 		players [currentPlayer].fieldId = currentField;  
+	}
+
+	IEnumerator LotterlyEvent(){
+
+		if (players[currentPlayer].money >=250){
+
+		}
+
+		yield return null ;
 	}
 
 //	private void switchCamera (int currentPlayer,bool mode){

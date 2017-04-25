@@ -28,7 +28,7 @@ public class ShopScrollList : MonoBehaviour ,Action{
     public Text myGoldDisplay;
 	public Text qoutaDisplay ; 
 
-    public Text slectionText;
+    public Text selectionText;
 	public Text statusText ; 
     public SimpleObjectPool buttonObjectPool;
 
@@ -78,9 +78,10 @@ public class ShopScrollList : MonoBehaviour ,Action{
         this.seed = null;
         currentPlayer = player;
         currentField = field ;
+        Debug.Log(currentPlayer.buyQouta);
         myGoldDisplay.text = "Money : "+currentPlayer.money.ToString();
         qoutaDisplay.text = "Qouta : "+currentPlayer.buyQouta.ToString();
-        slectionText.text = "Selection : " ;
+        selectionText.text = "Selection : " ;
         statusText.text = "Choose Seed to Plant";
         // RemoveButtons();
         AddButtons();
@@ -133,7 +134,7 @@ public class ShopScrollList : MonoBehaviour ,Action{
         this.seed = seed ;
         this.field = field ;
         updateDisplay();
-        Debug.Log(this.seed);
+
         
     }
     public void updateSelection(DefaultField field){
@@ -141,7 +142,6 @@ public class ShopScrollList : MonoBehaviour ,Action{
         this.seed = null ;
         this.field = field ;
         updateDisplay();
-        Debug.Log(this.seed);
         
     }
 
@@ -149,7 +149,7 @@ public class ShopScrollList : MonoBehaviour ,Action{
 
         myGoldDisplay.text = "Money : "+currentPlayer.money.ToString();
         qoutaDisplay.text = "Qouta : "+currentPlayer.buyQouta.ToString();
-        slectionText.text = "Selection : "+((this.seed == null) ? "Land" : this.seed.ToString());
+        selectionText.text = "Selection : "+((this.seed == null) ? "Land" : this.seed.ToString());
 
         isReadyBuy = getStatus();
         statusText.text = (isReadyBuy) ? "OK" : "Not enough money";

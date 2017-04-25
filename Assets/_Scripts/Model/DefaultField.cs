@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DefaultField : Field {
 
@@ -16,6 +17,9 @@ public class DefaultField : Field {
 	// public FieldType type = (int) FieldType.defaultField;
 
 	public int zone ;
+
+	public Text ProvinceText;
+	public Text StandCostText;
 
 	
 

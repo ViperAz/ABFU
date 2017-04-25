@@ -46,6 +46,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\FreeFly.cs" />
      <Compile Include="Assets\PlayerUI.cs" />
      <Compile Include="Assets\SimpleObjectPool.cs" />
      <Compile Include="Assets\_Scripts\Base\Action.cs" />
@@ -63,10 +64,11 @@
      <Compile Include="Assets\_Scripts\Model\Seed.cs" />
      <Compile Include="Assets\_Scripts\Model\SeedContainer.cs" />
      <Compile Include="Assets\_Scripts\Model\SeedModelHolder.cs" />
-     <Compile Include="Assets\_Scripts\Model\ShopScrollList.cs" />
      <Compile Include="Assets\_Scripts\UI\BuyOut.cs" />
      <Compile Include="Assets\_Scripts\UI\DiceUI.cs" />
+     <Compile Include="Assets\_Scripts\UI\LuckyDraw.cs" />
      <Compile Include="Assets\_Scripts\UI\ShopButton.cs" />
+     <Compile Include="Assets\_Scripts\UI\ShopScrollList.cs" />
      <None Include="Assets\SeedContainer.xml" />
      <None Include="Assets\DefaulField.xml" />
  <Reference Include="UnityEngine.UI">
