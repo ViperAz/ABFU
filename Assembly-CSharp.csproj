@@ -61,6 +61,7 @@
      <Compile Include="Assets\_Scripts\Model\EventField.cs" />
      <Compile Include="Assets\_Scripts\Model\Item.cs" />
      <Compile Include="Assets\_Scripts\Model\Player.cs" />
+     <Compile Include="Assets\_Scripts\Model\Province.cs" />
      <Compile Include="Assets\_Scripts\Model\Seed.cs" />
      <Compile Include="Assets\_Scripts\Model\SeedContainer.cs" />
      <Compile Include="Assets\_Scripts\Model\SeedModelHolder.cs" />
@@ -69,6 +70,7 @@
      <Compile Include="Assets\_Scripts\UI\LuckyDraw.cs" />
      <Compile Include="Assets\_Scripts\UI\ShopButton.cs" />
      <Compile Include="Assets\_Scripts\UI\ShopScrollList.cs" />
+     <None Include="Assets\Province.txt" />
      <None Include="Assets\SeedContainer.xml" />
      <None Include="Assets\DefaulField.xml" />
  <Reference Include="UnityEngine.UI">

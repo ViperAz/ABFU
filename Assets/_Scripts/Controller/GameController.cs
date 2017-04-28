@@ -146,7 +146,7 @@ public class GameController : MonoBehaviour {
 
 		Debug.Log ("Dice num :" + diceNum);
 
-
+		diceNum = 20  ;
 
 
 
@@ -312,6 +312,7 @@ public class GameController : MonoBehaviour {
 		BuyOutCanvas.SetActive(false);
 		ShopCanvas.SetActive(false);
 		RollBtnCanvas.SetActive(false);
+		LotteryCanvas.SetActive(false);
 		players.Clear();
 		field.Clear();
 		dice.Clear();
@@ -338,6 +339,14 @@ public class GameController : MonoBehaviour {
 		}
 		defaultField.Sort ((a, b) => a.Id.CompareTo (b.Id));
 		field.Sort ((a, b) => a.Id.CompareTo (b.Id));
+
+		List<Province> provinces = Province.Load();
+		for (int i = 0; i < defaultField.Count; i++)
+		{
+			defaultField[i].name = provinces[i].name;
+			defaultField[i].cost = provinces[i].cost;	
+			defaultField[i].updateUI();
+		}
 
 
 		boardLength = field.Count; 
@@ -550,11 +559,25 @@ public class GameController : MonoBehaviour {
 
 	IEnumerator LotterlyEvent(){
 
-		if (players[currentPlayer].money >=250){
+		if (players[currentPlayer].money >= luckydraw.StartPrice){
 
+			LotteryCanvas.SetActive(true);
+			luckydraw.Display(players[currentPlayer]);
+			yield return new WaitUntil(()=>(luckydraw.isStateReady == true || luckydraw.isFin == true));
+
+			if (luckydraw.isStateReady == true){
+				luckydraw.luckyDice.RollTheDice();
+
+				yield return new WaitUntil (()=>(luckydraw.luckyDice.IsDiceRolling() == false));
+				int diceNum = luckydraw.luckyDice.DicedNumber();
+				int reward = luckydraw.getPrize(diceNum);
+				players[currentPlayer].money += reward;
+				players[currentPlayer].updateUI();
+			}
+			yield return new WaitForSeconds(1.0f) ;
 		}
-
-		yield return null ;
+		LotteryCanvas.SetActive(false);
+		
 	}
 
 //	private void switchCamera (int currentPlayer,bool mode){

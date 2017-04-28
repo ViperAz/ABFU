@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class DefaultField : Field {
@@ -50,6 +48,11 @@ public class DefaultField : Field {
 	//Need Market Multiplyer
 	public int getBuyOutPrice(){
 		return (int)((this.cost+this.seed.cost)*GameController.globalMultiplyer*1.3) ;
+	}
+
+	public void updateUI(){
+		this.ProvinceText.text = name;
+		this.StandCostText.text = getStandCost().ToString();
 	}
 
 
