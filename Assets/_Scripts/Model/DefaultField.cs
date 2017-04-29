@@ -19,6 +19,8 @@ public class DefaultField : Field {
 	public Text ProvinceText;
 	public Text StandCostText;
 
+	public Text OwningText;
+
 	
 
 
@@ -51,8 +53,10 @@ public class DefaultField : Field {
 	}
 
 	public void updateUI(){
+		Debug.Log("Update ui");
 		this.ProvinceText.text = name;
-		this.StandCostText.text = getStandCost().ToString();
+		this.StandCostText.text = (owner == null)?"Buy Price "+cost.ToString()+" Baht":"StandPrice "+getStandCost().ToString()+" Baht";
+		this.OwningText.text = (owner == null)? "No Owner":owner.name ;
 	}
 
 

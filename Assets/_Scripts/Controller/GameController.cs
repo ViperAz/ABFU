@@ -146,9 +146,6 @@ public class GameController : MonoBehaviour {
 
 		Debug.Log ("Dice num :" + diceNum);
 
-		diceNum = 20  ;
-
-
 
 		//Move player to Center of the cell 
 		yield  return StartCoroutine(aTob(players[currentPlayer], field [players[currentPlayer].fieldId-1].transform.position));
@@ -341,11 +338,18 @@ public class GameController : MonoBehaviour {
 		field.Sort ((a, b) => a.Id.CompareTo (b.Id));
 
 		List<Province> provinces = Province.Load();
+		int temp = 0 ;
+		int zone = 0 ;
 		for (int i = 0; i < defaultField.Count; i++)
 		{
+			if (temp ==0){
+				zone++;
+			}
 			defaultField[i].name = provinces[i].name;
 			defaultField[i].cost = provinces[i].cost;	
+			defaultField[i].zone = zone;	
 			defaultField[i].updateUI();
+			temp = (temp+1)%8;
 		}
 
 
@@ -484,6 +488,7 @@ public class GameController : MonoBehaviour {
 		yield return new WaitUntil(() => isBuyFin == true);
 
 		curPlayer.updateUI();
+		field.updateUI();
 		
 		isShopOpen = false  ; 
 		ShopCanvas.SetActive(isShopOpen);
@@ -500,6 +505,7 @@ public class GameController : MonoBehaviour {
 				owner.money += standCost;
 				owner.updateUI();
 				curPlayer.updateUI();
+				field.updateUI();
 				if(curPlayer.money >= buyoutPrice){
 					//Buy out here
 					isBuyFin = false ;
@@ -511,6 +517,7 @@ public class GameController : MonoBehaviour {
 					BuyOutCanvas.SetActive(false);
 					owner.updateUI();
 					curPlayer.updateUI();
+					field.updateUI();
 					if(isBuyOut && curPlayer.buyQouta >0){
 						isShopOpen = true ; 
 						ShopCanvas.SetActive(isShopOpen);
@@ -520,13 +527,17 @@ public class GameController : MonoBehaviour {
 						ShopCanvas.SetActive(isShopOpen);
 						owner.updateUI();
 						curPlayer.updateUI();
+						field.updateUI();
 					}
+			
 			yield return null ;
 				}
+			
 			}
 			else{
 				//Debt here
 			}
+			
 			yield return null ;	
 		}
 
