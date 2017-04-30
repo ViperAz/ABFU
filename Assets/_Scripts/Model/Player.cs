@@ -25,6 +25,8 @@ public class Player : MonoBehaviour {
 	public PlayerUI ui ;
 	private int netWorth = 0;
 
+	public bool isWin = false ;
+
 
 
 	void Start (){
@@ -99,6 +101,51 @@ public class Player : MonoBehaviour {
 	public void updateUI(){
 		updateMoney ();
 		updateNetWorth();
+	}
+
+	public bool isOwnMarket(int zone){
+
+		foreach (DefaultField f in owning){
+			if (f.type == FieldType.marketField && f.zone == zone){
+				return true ; 
+			}
+		}
+		return false;
+
+	}
+
+	public void changeMultiPlyer (int zone,int multiply){
+		foreach(DefaultField f in owning){
+			if(f.zone == zone){
+				f.LocalMultiPlyer = multiply ;
+			}
+		}
+	}
+
+
+	public void checkFactoryWinner(){
+		int count = 0 ;
+		foreach(DefaultField f in owning){
+			if (f.type == FieldType.factoryField){
+				count++;
+			}
+		}
+		if (count == 4){
+			isWin =true ;
+		}
+	}
+
+	public void checkLineWinner(int zone){
+		int count = 0 ;
+
+		foreach(DefaultField f in owning){
+			if (f.zone == zone){
+				count++;
+			}
+		}
+		if(count == 8){
+			isWin =true ;
+		}
 	}
 
 

@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Xml ;
-using System.IO ; 
+using UnityEngine.UI;
 public class GameController : MonoBehaviour {
 
 	/**
@@ -53,13 +52,20 @@ public class GameController : MonoBehaviour {
 	private int playerCamMode = 0 ;
 	int boardLength ; 
 
-
+	public LogManager logManager ;
 	public GameObject ShopCanvas ; 
 	public GameObject BuyOutCanvas;
 
 	public GameObject LotteryCanvas ;
 
 	public GameObject RollBtnCanvas ;
+
+	public GameObject WinnerCanvas ;
+
+	public Text winnerText ;
+
+	public Text turnText;
+	public Text globalMultiplyerText;
 	public List<GameObject> DiceCanvas = new  List<GameObject>();
 	public List<GameObject> playerCanvas = new List<GameObject>();
 	public bool isShopOpen = false ; 
@@ -79,8 +85,12 @@ public class GameController : MonoBehaviour {
 
 	public LuckyDraw luckydraw ;
 
+	public Player winner ;
+
 	public static int globalMultiplyer = 1;
 	public static float Tax = 0.3f ;
+
+	public static  int CRITICAL_TURN = 10 ;
 
 	// Use this for initialization
 	void Start () {
@@ -111,8 +121,8 @@ public class GameController : MonoBehaviour {
 		if (!isGameMoving && isOtherFinish && isInitFinish) {
 			if(!checkWinner()){
 				StartCoroutine( playerTurn ());
-			}else{
-
+			}else if (isGameOver == true){
+				StartCoroutine(getWinner());
 			}
 			
 		}
@@ -123,7 +133,25 @@ public class GameController : MonoBehaviour {
 	}
 
 	bool checkWinner(){
+		foreach(Player p in players){
+			if (p.isWin){
+				winner = p ;
+				isGameOver = true ;
+				return true ;
+			}
+		}
+		if(players.Count == 1){
+			winner = players[0];
+			isGameOver = true ;
+			return true ;
+		}
 		return false ;
+	}
+
+	IEnumerator getWinner(){
+		WinnerCanvas.SetActive(true);
+		winnerText.text = winner.name ;
+		yield return new WaitUntil(()=>(isGameOver == false));
 	}
 
 
@@ -134,6 +162,11 @@ public class GameController : MonoBehaviour {
 			currentPlayer = (currentPlayer + 1) %playerCount ;
 			if (currentPlayer == 0){
 				this.turn -- ;
+				turnText.text = "Turn Left : "+turn.ToString();
+				if (turn < CRITICAL_TURN){
+					globalMultiplyer = 2 ;
+					globalMultiplyerText.text = "Global Multiplyer : "+globalMultiplyer.ToString();
+				}
 			}
 			changePlayerCam();
 			yield break;
@@ -145,7 +178,6 @@ public class GameController : MonoBehaviour {
 		yield return StartCoroutine(RollTheDice());
 
 		Debug.Log ("Dice num :" + diceNum);
-
 
 		//Move player to Center of the cell 
 		yield  return StartCoroutine(aTob(players[currentPlayer], field [players[currentPlayer].fieldId-1].transform.position));
@@ -386,15 +418,9 @@ public class GameController : MonoBehaviour {
 			g.SetActive(false);
 		}
 
-		
-
-		// Set who start game // Couruteen needed
-		// currentPlayer = Random.Range (0, playerCount);//Range 0 - (playerC -1)
-		// int tempPlayer = currentPlayer;
-		// for (int tempCount = playerCount; tempCount < players.Count; tempCount--) {
-
-		// }
-			isInitFinish = true ; 
+		globalMultiplyerText.text = "Global Multiplyer : "+globalMultiplyer.ToString();
+		turnText.text = "Turn Left : "+turn.ToString();
+		isInitFinish = true ; 
 	}
 
 
@@ -484,7 +510,7 @@ public class GameController : MonoBehaviour {
 		ShopCanvas.SetActive(isShopOpen);
 		// Debug.Log(defaultField.Find(x => x.Id== curPlayer.fieldId).ToString());
 		shoplist.Display (curPlayer,defaultField.Find(x => x.Id== curPlayer.fieldId));
-
+		// logManager.addLog("test");
 		yield return new WaitUntil(() => isBuyFin == true);
 
 		curPlayer.updateUI();
@@ -503,9 +529,11 @@ public class GameController : MonoBehaviour {
 			if(curPlayer.money > standCost){
 				curPlayer.money -=  standCost; 
 				owner.money += standCost;
+				
+				logManager.addLog(string.Format("{0} Lose {1} Baht to {2}.",curPlayer.name,standCost,owner.name));
 				owner.updateUI();
 				curPlayer.updateUI();
-				field.updateUI();
+				// field.updateUI();
 				if(curPlayer.money >= buyoutPrice){
 					//Buy out here
 					isBuyFin = false ;
@@ -518,7 +546,7 @@ public class GameController : MonoBehaviour {
 					owner.updateUI();
 					curPlayer.updateUI();
 					field.updateUI();
-					if(isBuyOut && curPlayer.buyQouta >0){
+					if(isBuyOut && curPlayer.buyQouta >0 && field.type == FieldType.defaultField){
 						isShopOpen = true ; 
 						ShopCanvas.SetActive(isShopOpen);
 						shoplist.Display (curPlayer,defaultField.Find(x => x.Id== curPlayer.fieldId));
@@ -529,13 +557,15 @@ public class GameController : MonoBehaviour {
 						curPlayer.updateUI();
 						field.updateUI();
 					}
-			
-			yield return null ;
-				}
-			
+				}	
 			}
 			else{
-				//Debt here
+				owner.money += standCost;
+				foreach(DefaultField f in curPlayer.owning){
+					f.removePlant();
+					f.owner = null;
+				}
+				players.Remove(curPlayer);
 			}
 			
 			yield return null ;	
@@ -557,7 +587,7 @@ public class GameController : MonoBehaviour {
 
 		}
 		players [currentPlayer].fieldId = currentField;  
-
+		logManager.addLog(string.Format("{0} lost in forest stop playing for 1 turn." ,players [currentPlayer])) ;
 		yield return null ;
 	}
 
@@ -565,7 +595,8 @@ public class GameController : MonoBehaviour {
 		int currentField = players[currentPlayer].fieldId;
 		currentField = (currentField + 20 ) % boardLength; 
 		yield return StartCoroutine(aTob(players[currentPlayer], field [currentField-1].transform.position)) ;
-		players [currentPlayer].fieldId = currentField;  
+		players [currentPlayer].fieldId = currentField; 
+		logManager.addLog(string.Format("{0} just lost into the forest." ,players [currentPlayer])) ;
 	}
 
 	IEnumerator LotterlyEvent(){
@@ -583,6 +614,12 @@ public class GameController : MonoBehaviour {
 				int diceNum = luckydraw.luckyDice.DicedNumber();
 				int reward = luckydraw.getPrize(diceNum);
 				players[currentPlayer].money += reward;
+				if (reward == 0){
+					logManager.addLog(string.Format("{0} won nothing." ,players [currentPlayer])) ;
+				}else{
+					logManager.addLog(string.Format("{0} just won {1} Baht from lottery event" ,players [currentPlayer],reward)) ;
+				}
+				
 				players[currentPlayer].updateUI();
 			}
 			yield return new WaitForSeconds(1.0f) ;

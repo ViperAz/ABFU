@@ -34,6 +34,8 @@ public class LuckyDraw : MonoBehaviour ,Action{
 
     public bool isStateReady = false ;
 
+    public LogManager LogManager;
+
 
     // Use this for initialization
     void Start () {

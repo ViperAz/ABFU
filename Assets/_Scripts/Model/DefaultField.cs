@@ -21,6 +21,10 @@ public class DefaultField : Field {
 
 	public Text OwningText;
 
+	public Text MultiPlyerText;
+
+	public int LocalMultiPlyer = 1;
+
 	
 
 
@@ -28,6 +32,12 @@ public class DefaultField : Field {
 
 	public override string ToString(){
 		return this.name ;
+	}
+
+	public void removePlant(){
+		foreach (Transform t in plantArea){
+			Destroy(t.gameObject);
+		}
 	}
 
 
@@ -45,11 +55,11 @@ public class DefaultField : Field {
 	//Need stock multiplyer
 	public int getStandCost(){
 		return ((this.cost/2)+this.seed.getStandCost(this.zone))
-		*GameController.globalMultiplyer;
+		*GameController.globalMultiplyer*LocalMultiPlyer;
 	}
 	//Need Market Multiplyer
 	public int getBuyOutPrice(){
-		return (int)((this.cost+this.seed.cost)*GameController.globalMultiplyer*1.3) ;
+		return (int)((this.cost+this.seed.cost)*GameController.globalMultiplyer*LocalMultiPlyer*1.3) ;
 	}
 
 	public void updateUI(){
@@ -57,7 +67,11 @@ public class DefaultField : Field {
 		this.ProvinceText.text = name;
 		this.StandCostText.text = (owner == null)?"Buy Price "+cost.ToString()+" Baht":"StandPrice "+getStandCost().ToString()+" Baht";
 		this.OwningText.text = (owner == null)? "No Owner":owner.name ;
+		this.MultiPlyerText.text = "X"+LocalMultiPlyer.ToString();
 	}
+
+
+
 
 
 

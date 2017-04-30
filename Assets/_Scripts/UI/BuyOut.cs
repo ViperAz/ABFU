@@ -16,6 +16,8 @@ public class BuyOut : MonoBehaviour,Action {
 	public Button confirmBtn;
 	public Button cancelBtn;
 
+	public LogManager LogManager ; 
+
 
 /// <summary>
 /// Awake is called when the script instance is being loaded.
@@ -37,13 +39,26 @@ public class BuyOut : MonoBehaviour,Action {
 	}
 
 	public void Confirm(){
+		LogManager.addLog(string.Format("{0} bought {1} from {2} for {3} Baht.",
+		currentPlayer.name,currentField.name,currentField.owner.name,
+		currentField.getBuyOutPrice().ToString()));
+
+		LogManager.addLog(string.Format("{0} get {1} Baht from Buyout",
+		currentField.owner.name,(currentField.getBuyOutPrice()*0.7).ToString()));
+
 		this.currentPlayer.money -= this.currentField.getBuyOutPrice();
 		this.currentField.owner.money += (int) (this.currentField.getBuyOutPrice()
 		*(1-GameController.Tax)/2);
+		
 
 		this.currentField.owner.removeField(this.currentField);
+		if(this.currentField.type == FieldType.marketField){
+			this.currentPlayer.changeMultiPlyer(this.currentField.zone,2);
+			this.currentField.owner.changeMultiPlyer(this.currentField.zone,1);
+		}
 		this.currentField.owner = this.currentPlayer;
 		this.currentPlayer.AddField(this.currentField);
+
 
 
 		GameController.isBuyOut = true ; 

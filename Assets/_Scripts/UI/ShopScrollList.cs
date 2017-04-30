@@ -23,7 +23,7 @@ public class ShopScrollList : MonoBehaviour ,Action{
     public Player currentPlayer;
     public DefaultField currentField;
 
-    public DefaultField field ;
+    // public DefaultField field ;
     private Seed seed ;
     public Text myGoldDisplay;
 	public Text qoutaDisplay ; 
@@ -34,6 +34,8 @@ public class ShopScrollList : MonoBehaviour ,Action{
 
     public Button confirmBtn;
     public Button cancelBtn ;
+
+    public LogManager LogManager ;
 
 
     // private DefaultField field ;
@@ -74,7 +76,6 @@ public class ShopScrollList : MonoBehaviour ,Action{
 
    public void Display(Player player,DefaultField field)
     {
-        this.field = null ;
         this.seed = null;
         currentPlayer = player;
         currentField = field ;
@@ -132,7 +133,7 @@ public class ShopScrollList : MonoBehaviour ,Action{
     public void updateSelection(Seed seed,DefaultField field){
         
         this.seed = seed ;
-        this.field = field ;
+        this.currentField = field ;
         updateDisplay();
 
         
@@ -140,7 +141,7 @@ public class ShopScrollList : MonoBehaviour ,Action{
     public void updateSelection(DefaultField field){
         
         this.seed = null ;
-        this.field = field ;
+        this.currentField = field ;
         updateDisplay();
         
     }
@@ -166,28 +167,36 @@ public class ShopScrollList : MonoBehaviour ,Action{
 
     public bool getStatus(){
         if (this.seed != null){
-            currentCost = this.seed.cost+this.field.cost;
+            currentCost = this.seed.cost+this.currentField.cost;
             return checkCost(currentCost);
         }
         else{
-            currentCost = this.field.cost;
+            currentCost = this.currentField.cost;
             return checkCost(currentCost);
         }
     }
 
     public void Confirm(){
-        if(isReadyBuy && this.field != null){
+        if(isReadyBuy && this.currentField != null){
             this.currentPlayer.money -= currentCost ;
-            this.field.owner = this.currentPlayer;
+            this.currentField.owner = this.currentPlayer;
+            LogManager.addLog(string.Format("{0} Buy {1}.",currentPlayer.name,currentField.name));
             if(this.seed !=null){
-                this.field.seed = this.seed ;
-                this.field.updatePlantModel((modelList.Find(x=> x.name == this.seed.name)));
+                this.currentField.seed = this.seed ;
+                this.currentField.updatePlantModel((modelList.Find(x=> x.name == this.seed.name)));
+                LogManager.addLog(string.Format("{0} Plant {1} on {2}.",currentPlayer.name,seed.name,currentField.name));
             }
             // Instantiate((modelList.Find(x=> x.name == this.seed.name).model),this.currentField.plantArea.position,Quaternion.identity,this.currentField.plantArea);
-            if(!this.currentPlayer.owning.Contains(this.field)){
-                this.currentPlayer.AddField(this.field);
+            if(!this.currentPlayer.owning.Contains(this.currentField)){
+                this.currentPlayer.AddField(this.currentField);
             }
-            
+            if(this.currentField.type == FieldType.marketField){
+			    this.currentPlayer.changeMultiPlyer(this.currentField.zone,2);
+		    }
+            if (this.currentField.type == FieldType.factoryField){
+                this.currentPlayer.checkFactoryWinner();
+            }
+            this.currentPlayer.checkLineWinner(currentField.zone);
             GameController.isBuyFin = true ; 
             this.currentPlayer.buyQouta--;
             RemoveButtons();
